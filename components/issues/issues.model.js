@@ -21,11 +21,11 @@ const issuesSchema = mongoose.Schema(
     },
     tags: {
       type: [String],
-      enum: ['electricity, sanitation, furniture, mess, equipments, co-curricular']
+      // enum: ['electricity, sanitation, furniture, mess, equipments, co-curricular']
     },
     status: {
       type: String,
-      enum: ['Pending', 'In progress', 'Completed'],
+      enum: ['Pending', 'In-progress', 'Completed'],
     },
     priority: {
       type: String,
@@ -40,7 +40,7 @@ const issuesSchema = mongoose.Schema(
     dateAdded: {
       type: Date,
     },
-    image: {
+    imageSrc: {
       type: String,
     },
   }, { Timestamp: true });

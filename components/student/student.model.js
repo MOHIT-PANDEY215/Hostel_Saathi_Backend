@@ -11,7 +11,7 @@ const studentSchema = mongoose.Schema(
       type: String,
       required: [true, 'Student name is required'],
     },
-    regitrationNumber: {
+    registrationNumber: {
       type: String,
       unique: [true, 'Regitration number should be unique'],
       required: [true, 'Regitration number is required'],
@@ -20,7 +20,7 @@ const studentSchema = mongoose.Schema(
       type: Number,
       required: [true, 'Hostel Number is required'],
     },
-    image: {
+    imageSrc: {
       type: String,
     },
     mobileNumber: {
