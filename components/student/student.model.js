@@ -1,35 +1,77 @@
 import mongoose from "mongoose";
+import dotenv from "dotenv";
+dotenv.config();
 
 const studentSchema = mongoose.Schema(
   {
-    id: {
+    fullName: {
       type: String,
-      unique: [true, 'Student id should be unique'],
-      required: [true, 'Student id is required'],
-    },
-    name: {
-      type: String,
-      required: [true, 'Student name is required'],
+      required: [true, "Student name is required"],
     },
     registrationNumber: {
       type: String,
-      unique: [true, 'Regitration number should be unique'],
-      required: [true, 'Regitration number is required'],
+      unique: [true, "Regitration number should be unique"],
+      required: [true, "Regitration number is required"],
     },
     hostelNumber: {
       type: Number,
-      required: [true, 'Hostel Number is required'],
+      required: [true, "Hostel Number is required"],
     },
-    imageSrc: {
+    avatar: {
       type: String,
     },
     mobileNumber: {
       type: String,
-      unique: [true, 'Mobile number should be unique'],
-      required: [true, 'Mobile number is required'],
+      unique: [true, "Mobile number should be unique"],
+      required: [true, "Mobile number is required"],
     },
-  }, { Timestamp: true });
+    password: {
+      type: String,
+      required: [true, "Password is required"],
+    },
+    refreshToken: {
+      type: String,
+    },
+  },
+  { strict: false, timestamps: true, collection: process.env.studentModel }
+);
 
-const Student = mongoose.model("Student", studentSchema);
+studentSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
+
+studentSchema.methods.isPasswordCorrect = async function (password) {
+  return await bcrypt.compare(password, this.password);
+};
+
+studentSchema.methods.generateAccessToken = function () {
+  return jwt.sign(
+    {
+      _id: this._id,
+      registrationNumber: this.registrationNumber,
+      hostelNumber: this.hostelNumber,
+    },
+    process.env.ACCESS_TOKEN_SECRET,
+    {
+      expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
+    }
+  );
+};
+studentSchema.methods.generateRefreshToken = function () {
+  return jwt.sign(
+    {
+      _id: this._id,
+    },
+    process.env.REFRESH_TOKEN_SECRET,
+    {
+      expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
+    }
+  );
+};
+
+const Student = mongoose.model(process.env.studentModel, studentSchema);
 
 export default Student;

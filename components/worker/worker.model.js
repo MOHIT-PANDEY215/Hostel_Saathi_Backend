@@ -2,12 +2,7 @@ import mongoose from "mongoose";
 
 const workerSchema = mongoose.Schema(
   {
-    id: {
-      type: String,
-      unique: [true, 'Issue id should be unique'],
-      required: [true, 'Issue id is required'],
-    },
-    name: {
+    fullName: {
       type: String,
       required: [true, 'Worker name is required'],
     },
@@ -17,8 +12,8 @@ const workerSchema = mongoose.Schema(
     mobileNumber: {
       type: Number,
     },
-  }, { Timestamp: true });
+  }, {strict: false, timestamps:true , collection: process.env.workerModel });
 
-const Worker = mongoose.model("Worker", workerSchema);
+const Worker = mongoose.model(process.env.workerModel, workerSchema);
 
 export default Worker;

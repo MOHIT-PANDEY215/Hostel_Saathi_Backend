@@ -1,12 +1,9 @@
 import mongoose from "mongoose";
+import dotenv from 'dotenv'
+dotenv.config();
 
 const issuesSchema = mongoose.Schema(
   {
-    id: {
-      type: String,
-      unique: [true, 'Issue id should be unique'],
-      required: [true, 'Issue id is required'],
-    },
     hostelNumber: {
       type: Number,
       required: [true, 'Hostel Number is required'],
@@ -31,20 +28,25 @@ const issuesSchema = mongoose.Schema(
       type: String,
       enum: ['Low', 'Medium', 'High'],
     },
+    isCompleted:{
+      type:Boolean,
+    },
+    isAssigned:{
+      type:Boolean,
+    },
     dateAssigned: {
       type: Date,
     },
     dateCompleted: {
       type: Date,
     },
-    dateAdded: {
-      type: Date,
+    images: {
+      type: [String],
     },
-    imageSrc: {
-      type: String,
-    },
-  }, { Timestamp: true });
+  }, {strict: false, timestamps:true , collection: process.env.issueModel });
+  
+  const Issue = mongoose.model(process.env.issueModel, issuesSchema);
 
-const Issue = mongoose.model("Issue", issuesSchema);
 
 export default Issue;
+
