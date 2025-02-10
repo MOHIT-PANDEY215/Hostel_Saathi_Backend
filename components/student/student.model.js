@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import { modelSchemaPattern } from "../../constants/model.js";
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 dotenv.config();
 
 const studentSchema = mongoose.Schema(

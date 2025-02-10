@@ -24,16 +24,20 @@ const issuesSchema = mongoose.Schema(
     status: {
       type: String,
       enum: ['Pending', 'In-progress', 'Completed'],
+      default:'Pending'
     },
     priority: {
       type: String,
       enum: ['Low', 'Medium', 'High'],
+      default:'Low'
     },
     isCompleted:{
       type:Boolean,
+      default:false
     },
     isAssigned:{
       type:Boolean,
+      default:false
     },
     dateAssigned: {
       type: Date,

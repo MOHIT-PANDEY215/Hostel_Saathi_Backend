@@ -44,38 +44,20 @@ const issueController = {
 
     const skipCount = (page - 1) * perPage;
 
-    let queryParams = {};
+    const completedFilter = isCompleted === "true" ? true : isCompleted === "false" ? false : undefined;
+    const assignedFilter = isAssigned === "true" ? true : isAssigned === "false" ? false : undefined;
 
-    if (hostelNumber) {
-      queryParams = {
-        ...queryParams,
-        hostelNumber: Number(hostelNumber),
-      };
-    }
-    if (isCompleted === false) {
-      queryParams = {
-        ...queryParams,
-        isCompleted: false,
-      };
-    } else if (isCompleted === true) {
-      queryParams = {
-        ...queryParams,
-        isCompleted: true,
-      };
-    }
-    if (isAssigned === false) {
-      queryParams = {
-        ...queryParams,
-        isAssigned: false,
-      };
-    } else if (isAssigned === true) {
-      queryParams = {
-        ...queryParams,
-        isAssigned: true,
-      };
-    }
+    const queryParams = {};
+
+    if (hostelNumber) queryParams.hostelNumber = Number(hostelNumber);
+    if (completedFilter !== undefined) queryParams.isCompleted = completedFilter;
+    if (assignedFilter !== undefined) queryParams.isAssigned = assignedFilter;
     if (search) {
-      queryParams["$or"] = [{ title: { $regex: search, $options: "i" } }];
+      queryParams["$or"] = [
+        { title: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
+        { tags: { $regex: search, $options: "i" } }
+      ];
     }
     const totalItems = await Issue.countDocuments(queryParams);
     const totalPages = Math.ceil(totalItems / perPage);
@@ -113,7 +95,7 @@ const issueController = {
     if (!issueId) {
       throw new ApiError(400, "Bad Input");
     }
-    const issue = await Issue.findbyId(issueId);
+    const issue = await Issue.findById(issueId);
     if (!issue) {
       throw new ApiError(404, "Issue does not exists");
     }
@@ -135,7 +117,7 @@ const issueController = {
     } = req.body;
 
     if (issueId) {
-      const prevIssue = await Issue.findbyId(issueId);
+      const prevIssue = await Issue.findById(issueId);
       if (!prevIssue) {
         throw new ApiError(404, "issue does not exists");
       }
@@ -144,12 +126,14 @@ const issueController = {
       if (req.body.imageUrls) {
         imageURLs = [req.body.images];
       }
+      if(req.files){
 
-      for (const file of req.files) {
-        let imageUrl;
-        if (file.fieldname.includes("issueImage")) {
-          imageUrl = await uploadOnCloudinary(file.path);
-          imageURLs.push(imageUrl);
+        for (const file of req.files) {
+          let imageUrl;
+          if (file.fieldname.includes("issueImage")) {
+            imageUrl = await uploadOnCloudinary(file.path);
+            imageURLs.push(imageUrl);
+          }
         }
       }
 
@@ -185,15 +169,17 @@ const issueController = {
       }
 
       let imageURLs = [];
-
-      for (const file of req.files) {
-        let imageUrl;
-        if (file.fieldname.includes("issueImage")) {
-          imageUrl = await uploadOnCloudinary(file.path);
-          imageURLs.push(imageUrl);
+      
+      if(req?.files){
+        for (const file of req?.files) {
+          let imageUrl;
+          if (file.fieldname.includes("issueImage")) {
+            imageUrl = await uploadOnCloudinary(file.path);
+            imageURLs.push(imageUrl);
+          }
         }
       }
-
+      
       const issueParams = {
         title: title,
         description: description,
@@ -205,7 +191,7 @@ const issueController = {
         isCompleted: false,
         isAssigned: false,
       };
-
+      
       const newIssue = await Issue.create(issueParams);
 
       return res
@@ -270,7 +256,7 @@ const issueController = {
     if (!issueId || !priority) {
       throw new ApiError(400, "Bad input");
     }
-    const issue = await Issue.findbyId(issueId);
+    const issue = await Issue.findById(issueId);
     if (!issue) {
       throw new ApiError(404, "Issue does not exists");
     }

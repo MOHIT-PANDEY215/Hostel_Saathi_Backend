@@ -2,7 +2,9 @@ import { BSON } from "bson";
 import dotenv from "dotenv";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { ApiError } from "../../utils/ApiError.js";
+import {ApiResponse} from '../../utils/ApiResponse.js'
 import Student from "./student.model.js";
+import jwt from 'jsonwebtoken'
 import { uploadOnCloudinary } from "../../utils/cloudinary.js";
 
 dotenv.config();
@@ -22,7 +24,7 @@ const generateAccessAndRefereshTokens = async (userId) => {
   } catch (error) {
     throw new ApiError(
       500,
-      "Something went wrong while generating referesh and access token"
+      "Something went wrong while generating referesh and access token"+error
     );
   }
 };
@@ -43,32 +45,33 @@ const studentController = {
         throw new ApiError(409, "User already exists")
     }
 
-    const avatarLocalPath = req.files?.avatar[0]?.path;
+    // const avatarLocalPath = req.files?.avatar[0]?.path;
 
-    let coverImageLocalPath;
-    if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
-        coverImageLocalPath = req.files.coverImage[0].path
-    }
+    // let coverImageLocalPath;
+    // if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
+    //     coverImageLocalPath = req.files.coverImage[0].path
+    // }
     
 
-    if (!avatarLocalPath) {
-        throw new ApiError(400, "Avatar file is required")
-    }
+    // if (!avatarLocalPath) {
+    //     throw new ApiError(400, "Avatar file is required")
+    // }
 
-    const avatar = await uploadOnCloudinary(avatarLocalPath)
-    const coverImage = await uploadOnCloudinary(coverImageLocalPath)
+    // const avatar = await uploadOnCloudinary(avatarLocalPath)
+    // const coverImage = await uploadOnCloudinary(coverImageLocalPath)
 
-    if (!avatar) {
-        throw new ApiError(400, "Avatar file is required")
-    }
+    // if (!avatar) {
+    //     throw new ApiError(400, "Avatar file is required")
+    // }
    
 
     const user = await Student.create({
         fullName,
-        avatar: avatar.url,
+        // avatar: avatar.url,
         password,
         hostelNumber,
         mobileNumber,
+        registrationNumber,
     })
 
     const createdUser = await Student.findById(user._id).select(
