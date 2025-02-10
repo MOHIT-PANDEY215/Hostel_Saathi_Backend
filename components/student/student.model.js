@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import { modelSchemaPattern } from "../../constants/model.js";
 dotenv.config();
 
 const studentSchema = mongoose.Schema(
@@ -33,7 +34,7 @@ const studentSchema = mongoose.Schema(
       type: String,
     },
   },
-  { strict: false, timestamps: true, collection: process.env.studentModel }
+  { strict: false, timestamps: true, collection: modelSchemaPattern.studentModel }
 );
 
 studentSchema.pre("save", async function (next) {
@@ -72,6 +73,6 @@ studentSchema.methods.generateRefreshToken = function () {
   );
 };
 
-const Student = mongoose.model(process.env.studentModel, studentSchema);
+const Student = mongoose.model(modelSchemaPattern.studentModel, studentSchema);
 
 export default Student;

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { modelSchemaPattern } from "../../constants/model.js";
 
 const workerSchema = mongoose.Schema(
   {
@@ -12,8 +13,8 @@ const workerSchema = mongoose.Schema(
     mobileNumber: {
       type: Number,
     },
-  }, {strict: false, timestamps:true , collection: process.env.workerModel });
+  }, {strict: false, timestamps:true , collection: modelSchemaPattern.workerModel });
 
-const Worker = mongoose.model(process.env.workerModel, workerSchema);
+const Worker = mongoose.model(modelSchemaPattern.workerModel, workerSchema);
 
 export default Worker;

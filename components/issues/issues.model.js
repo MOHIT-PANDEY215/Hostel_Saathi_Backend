@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import dotenv from 'dotenv'
+import { modelSchemaPattern } from "../../constants/model.js";
 dotenv.config();
 
 const issuesSchema = mongoose.Schema(
@@ -43,9 +44,9 @@ const issuesSchema = mongoose.Schema(
     images: {
       type: [String],
     },
-  }, {strict: false, timestamps:true , collection: process.env.issueModel });
+  }, {strict: false, timestamps:true , collection: modelSchemaPattern.issueModel });
   
-  const Issue = mongoose.model(process.env.issueModel, issuesSchema);
+  const Issue = mongoose.model(modelSchemaPattern.issueModel, issuesSchema);
 
 
 export default Issue;
