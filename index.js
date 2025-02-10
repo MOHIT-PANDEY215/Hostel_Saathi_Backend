@@ -8,8 +8,7 @@ dotenv.config({
 
 
 const MONGO_URI=process.env.MONGO_URI
-const port = process.env.port
-
+const port = process.env.PORT
 
 mongoose.connect(MONGO_URI, {
     // useNewUrlParser: true,
