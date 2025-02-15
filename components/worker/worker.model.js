@@ -13,6 +13,11 @@ const workerSchema = mongoose.Schema(
     mobileNumber: {
       type: Number,
     },
+    userRole: {
+      type: String,
+      required: [true, "User Role is required"],
+      default: 'worker'
+    },    
   }, {strict: false, timestamps:true , collection: modelSchemaPattern.workerModel });
 
 const Worker = mongoose.model(modelSchemaPattern.workerModel, workerSchema);

@@ -27,6 +27,11 @@ const adminSchema = mongoose.Schema(
       type: String,
       required: [true, "Password is required"],
     },
+    userRole: {
+      type: String,
+      required: [true, "User Role is required"],
+      default: 'admin'
+    },
     refreshToken: {
       type: String,
     },

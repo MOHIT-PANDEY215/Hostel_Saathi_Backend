@@ -32,6 +32,11 @@ const studentSchema = mongoose.Schema(
       type: String,
       required: [true, "Password is required"],
     },
+    userRole: {
+      type: String,
+      required: [true, "User Role is required"],
+      default: 'student'
+    },
     refreshToken: {
       type: String,
     },
