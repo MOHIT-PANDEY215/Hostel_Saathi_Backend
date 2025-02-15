@@ -28,13 +28,13 @@ const options = {
       },
     ],
     servers: [
+        {
+          url: "https://hostel-saathi-backend.onrender.com",
+          description: "Production Server",
+        },
       {
         url: "http://localhost:4000",
         description: "Local Development Server",
-      },
-      {
-        url: "https://hostel-saathi-backend.onrender.com",
-        description: "Production Server",
       },
     ],
     components: {
