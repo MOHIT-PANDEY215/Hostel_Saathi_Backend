@@ -49,14 +49,24 @@ const studentController = {
         throw new ApiError(409, "User already exists");
       }
 
-      const user = await Student.create({
+      const avatarLocalPath = req?.files[0]?.fieldname.includes("avatar")?req.files[0]?.path:undefined;
+      let avatar;
+      if(avatarLocalPath){
+        avatar = await uploadOnCloudinary(avatarLocalPath)
+      }
+      
+      const createParams ={
         fullName,
         password,
-        hostelNumber,
+        hostelNumber:Number(hostelNumber),
         mobileNumber,
         registrationNumber,
         userRole: "student",
-      });
+      }
+      if(avatar){
+        createParams.avatar=avatar?.url
+      }
+      const user = await Student.create(createParams);
 
       const createdUser = await Student.findById(user._id).select("-password -refreshToken");
 
@@ -68,6 +78,7 @@ const studentController = {
         new ApiResponse(201, createdUser, "User registered successfully")
       );
     } catch (error) {
+      console.log(error)
       const status = error.statusCode || 500;
       return res.status(status).json({
         success: false,

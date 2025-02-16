@@ -6,6 +6,7 @@ import { ApiResponse } from "../../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 import Admin from "./admin.model.js";
 import { getSortBy } from "../../utils/helper.js";
+import { uploadOnCloudinary } from "../../utils/cloudinary.js";
 
 dotenv.config();
 
@@ -51,14 +52,25 @@ const AdminController = {
         throw new ApiError(409, "User already exists");
       }
 
-      const user = await Admin.create({
+      const avatarLocalPath = req?.files[0]?.fieldname.includes("avatar")?req.files[0]?.path:undefined;
+      let avatar;
+      if(avatarLocalPath){
+        avatar = await uploadOnCloudinary(avatarLocalPath)
+      }
+      
+      const createParams ={
         fullName,
         password,
-        hostelNumber,
+        hostelNumber:Number(hostelNumber),
         mobileNumber,
         username,
         userRole: "admin",
-      });
+      }
+      if(avatar){
+        createParams.avatar=avatar?.url
+      }
+
+      const user = await Admin.create(createParams);
 
       const createdUser = await Admin.findById(user._id).select(
         "-password -refreshToken"
@@ -77,6 +89,7 @@ const AdminController = {
           new ApiResponse(201, createdUser, "User registered successfully")
         );
     } catch (error) {
+        console.log(error)
       const status = error.statusCode || 500;
       return res.status(status).json({
         success: false,
@@ -126,6 +139,7 @@ const AdminController = {
           )
         );
     } catch (error) {
+        console.log(error)
       const status = error.statusCode || 500;
       return res.status(status).json({
         success: false,

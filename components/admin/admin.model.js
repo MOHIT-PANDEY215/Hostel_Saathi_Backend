@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 import { modelSchemaPattern } from "../../constants/model.js";
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
 const adminSchema = mongoose.Schema(
   {
@@ -7,7 +9,7 @@ const adminSchema = mongoose.Schema(
       type: String,
       required: [true, "Full name is required"],
     },
-    userName: {
+    username: {
       type: String,
       required: [true, "User name is required"],
     },

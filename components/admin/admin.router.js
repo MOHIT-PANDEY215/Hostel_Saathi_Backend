@@ -44,7 +44,7 @@ const adminRouter = Router();
  *       500:
  *         description: Internal server error
  */
-adminRouter.post("/register", upload.any(), adminController.registerAdmin);
+adminRouter.post("/register", upload.any(),verifyJWT,verifyAdmin, adminController.registerAdmin);
 
 /**
  * @swagger
@@ -149,7 +149,7 @@ adminRouter.post("/refresh-token", adminController.refreshAccessToken);
  *       500:
  *         description: Internal server error
  */
-adminRouter.post("/change-password", verifyJWT, adminController.changeCurrentPassword);
+adminRouter.post("/change-password", verifyJWT,verifyAdmin, adminController.changeCurrentPassword);
 
 /**
  * @swagger
