@@ -1,6 +1,7 @@
 import { BSON } from "bson";
 import dotenv from "dotenv";
 import Issue from "./issues.model.js";
+import Worker from '../worker/worker.model.js'
 import { uploadOnCloudinary } from "../../utils/cloudinary.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { ApiError } from "../../utils/ApiError.js";
