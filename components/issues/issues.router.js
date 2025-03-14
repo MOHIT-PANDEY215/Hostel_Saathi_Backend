@@ -109,6 +109,8 @@ issueRouter.get("/", issueController.getIssueById);
  *               hostelNumber:
  *                 type: integer
  *                 example: 5
+ *               isCompleted:
+ *                 type: boolean
  *               tags:
  *                 type: array
  *                 items:
