@@ -1,7 +1,7 @@
 import { BSON } from "bson";
 import dotenv from "dotenv";
 import Issue from "./issues.model.js";
-import Worker from '../worker/worker.model.js'
+import Worker from "../worker/worker.model.js";
 import { uploadOnCloudinary } from "../../utils/cloudinary.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { ApiError } from "../../utils/ApiError.js";
@@ -78,12 +78,10 @@ const issueController = {
         );
     } catch (error) {
       console.error(error);
-      return res
-        .status(error.statusCode || 500)
-        .json({
-          success: false,
-          message: error.message || "Internal Server Error",
-        });
+      return res.status(error.statusCode || 500).json({
+        success: false,
+        message: error.message || "Internal Server Error",
+      });
     }
   }),
 
@@ -100,12 +98,10 @@ const issueController = {
         .json(new ApiResponse(200, issue, "Issue fetched successfully"));
     } catch (error) {
       console.error(error);
-      return res
-        .status(error.statusCode || 500)
-        .json({
-          success: false,
-          message: error.message || "Internal Server Error",
-        });
+      return res.status(error.statusCode || 500).json({
+        success: false,
+        message: error.message || "Internal Server Error",
+      });
     }
   }),
 
@@ -185,12 +181,10 @@ const issueController = {
       }
     } catch (error) {
       console.error(error);
-      return res
-        .status(error.statusCode || 500)
-        .json({
-          success: false,
-          message: error.message || "Internal Server Error",
-        });
+      return res.status(error.statusCode || 500).json({
+        success: false,
+        message: error.message || "Internal Server Error",
+      });
     }
   }),
 
@@ -223,7 +217,7 @@ const issueController = {
 
       const newIssue = await Issue.findByIdAndUpdate(
         issueId,
-        { dateAssigned: new Date(), assignedBy: user, assignedTo, isAssigned },
+        { dateAssigned: new Date(), assignedBy: user, assignedTo, isAssigned:true },
         { new: true }
       );
 
@@ -232,12 +226,10 @@ const issueController = {
         .json(new ApiResponse(200, newIssue, "Worker assigned successfully"));
     } catch (error) {
       console.error(error);
-      return res
-        .status(error.statusCode || 500)
-        .json({
-          success: false,
-          message: error.message || "Internal Server Error",
-        });
+      return res.status(error.statusCode || 500).json({
+        success: false,
+        message: error.message || "Internal Server Error",
+      });
     }
   }),
 
@@ -262,12 +254,34 @@ const issueController = {
         .json(new ApiResponse(200, newIssue, "Priority set successfully"));
     } catch (error) {
       console.error(error);
+      return res.status(error.statusCode || 500).json({
+        success: false,
+        message: error.message || "Internal Server Error",
+      });
+    }
+  }),
+  deleteIssue: asyncHandler(async (req, res) => {
+    try {
+      const user = req.user;
+      if (user?.userRole !== "admin") throw new ApiError(403, "Access Denied");
+
+      const { issueId } = req.body;
+      if (!issueId) throw new ApiError(400, "Bad input");
+
+      const issue = await Issue.findById(issueId);
+      if (!issue) throw new ApiError(404, "Issue does not exist");
+
+      await Issue.findByIdAndDelete(issueId);
+
       return res
-        .status(error.statusCode || 500)
-        .json({
-          success: false,
-          message: error.message || "Internal Server Error",
-        });
+        .status(200)
+        .json(new ApiResponse(200, {}, "Issue deleted successfully"));
+    } catch (error) {
+      console.error(error);
+      return res.status(error.statusCode || 500).json({
+        success: false,
+        message: error.message || "Internal Server Error",
+      });
     }
   }),
 };

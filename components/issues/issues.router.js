@@ -192,4 +192,30 @@ issueRouter.post("/assign-worker", verifyJWT, verifyAdmin, issueController.assig
  */
 issueRouter.post("/set-priority", verifyJWT, verifyAdmin, issueController.setPriority);
 
+/**
+ * @swagger
+ * /api/v1/issue/delete:
+ *   post:
+ *     summary: Delete an issue
+ *     description: Deletes an issue (Admin only).
+ *     tags:
+ *       - Issues
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               issueId:
+ *                 type: string
+ *                 example: "65a8b9e5f3d3c9aabbcc1122"
+ *     responses:
+ *       200:
+ *         description: Issue deleted successfully.
+ */
+issueRouter.post("/delete", verifyJWT, verifyAdmin, issueController.deleteIssue);
+
 export default issueRouter;
