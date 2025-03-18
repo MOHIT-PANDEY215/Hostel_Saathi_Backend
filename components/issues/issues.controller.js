@@ -128,6 +128,11 @@ const issueController = {
           }
         }
       }
+      const formattedTags = typeof tags === "string"
+        ? tags.split(",").map((tag) => tag.trim()) 
+        : Array.isArray(tags)
+        ? tags
+        : [];
 
       if (issueId) {
         const prevIssue = await Issue.findById(issueId);
@@ -137,7 +142,7 @@ const issueController = {
           title: title || prevIssue.title,
           description: description || prevIssue.description,
           hostelNumber: Number(hostelNumber) || Number(prevIssue.hostelNumber),
-          tags: tags || prevIssue.tags || [],
+          tags: formattedTags || prevIssue.tags || [],
           status: status || prevIssue.status || "Pending",
           priority: prevIssue.priority || "Low",
         };
@@ -167,7 +172,7 @@ const issueController = {
           description,
           hostelNumber: Number(hostelNumber),
           raisedBy: user,
-          tags: tags || [],
+          tags: formattedTags || [],
           status: "Pending",
           images: imageURLs,
           isCompleted: false,
