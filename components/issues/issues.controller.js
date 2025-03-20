@@ -124,7 +124,7 @@ const issueController = {
         for (const file of req.files) {
           if (file.fieldname.includes("issueImage")) {
             let imageUrl = await uploadOnCloudinary(file.path);
-            imageURLs.push(imageUrl);
+            imageURLs.push(imageUrl.url);
           }
         }
       }
