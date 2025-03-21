@@ -128,11 +128,12 @@ const issueController = {
           }
         }
       }
-      const formattedTags = typeof tags === "string"
-        ? tags.split(",").map((tag) => tag.trim()) 
-        : Array.isArray(tags)
-        ? tags
-        : [];
+      const formattedTags =
+        typeof tags === "string"
+          ? tags.split(",").map((tag) => tag.trim())
+          : Array.isArray(tags)
+          ? tags
+          : [];
 
       if (issueId) {
         const prevIssue = await Issue.findById(issueId);
@@ -152,6 +153,7 @@ const issueController = {
             ...issueParams,
             isCompleted: true,
             dateCompleted: prevIssue.dateCompleted || new Date(),
+            status: "Completed",
           };
         }
 
@@ -222,7 +224,13 @@ const issueController = {
 
       const newIssue = await Issue.findByIdAndUpdate(
         issueId,
-        { dateAssigned: new Date(), assignedBy: user, assignedTo, isAssigned:true },
+        {
+          dateAssigned: new Date(),
+          assignedBy: user,
+          assignedTo,
+          isAssigned: true,
+          status: "In-progress",
+        },
         { new: true }
       );
 
