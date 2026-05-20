@@ -1,6 +1,13 @@
 export const modelSchemaPattern={
+    userModel:'hs_users',
     studentModel : 'hs_students',
-    issueModel: 'hs_issues',
     workerModel:'hs_workers',
-    adminModel:'hs_admin',
+    wardenModel:'hs_wardens',
+    superAdminModel:'hs_super_admins',
+    organisationModel:'hs_organisations',
+    hostelModel:'hs_hostels',
+    roomModel:'hs_rooms',
+    bedModel:'hs_beds',
+    issueModel: 'hs_issues',
+    tagModel:'hs_tags',
 }

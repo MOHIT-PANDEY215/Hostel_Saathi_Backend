@@ -29,7 +29,7 @@ const options = {
     ],
     servers: [
         {
-          url: "https://hostel-saathi-backend.onrender.com",
+          url: "https://api.hostel-saathi.mohit-pandey.com/",
           description: "Production Server",
         },
       {

@@ -1,72 +1,64 @@
-import Admin from "../components/admin/admin.model.js";
-import Student from "../components/student/student.model.js";
+
 import { ApiError } from "../utils/ApiError.js";
+import jwt from "jsonwebtoken";
+import Warden from "../components/roles/warden/warden.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import jwt from "jsonwebtoken"
-// import { User } from "../models/user.model.js";
+import Student from "../components/roles/student/student.model.js";
+import Worker from "../components/roles/worker/worker.model.js";
+import SuperAdmin from "../components/roles/superAdmin/superAdmin.model.js";
+import User from "../components/user/user.model.js";
 
-export const verifyJWT = asyncHandler(async(req, res, next) => {
-    try {
-        const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "")
-        
-        // console.log(token);
-        if (!token) {
-            throw new ApiError(401, "Unauthorized request")
-        }
-        let userId;
-        const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET,(err,user)=>{
-            if(err){
-                throw new ApiError(401, "Invalid Access Token") 
-            }
-            userId=user._id
-        })
-        let user = await Student.findById(userId).select(
-            "-password -refreshToken"
-          );
-        if(!user){
-            user = await Admin.findById(userId).select(
-                "-password -refreshToken"
-              );
-              if(!user){
+export const verifyJWT = asyncHandler(async (req, res, next) => {
+  try {
+    const token =
+      req.cookies?.accessToken ||
+      req.header("Authorization")?.replace("Bearer ", "");
 
-                  throw new ApiError(404, "Invalid User") 
-                }
-        }
-        req.user = user;
-        next()
-        
-    } catch (error) {
-      return res
-      .status(401)
-      .json(
-        {
-          success:false,
-          message:"Invalid access token",
-          timestamp:new Date().toISOString(),
-        }
-        )
+    if (!token) {
+      throw new ApiError(401, "Unauthorized request");
     }
-    
-})
-export const verifyAdmin = asyncHandler(async(req, res, next) => {
+
+    let decoded;
+
     try {
-        const user=req.user
-        console.log(user)
-        if(!user || user?.userRole!=='admin'){
-            throw new ApiError(401,"Only admin can access.")
-        }
-        next()
-        
-    } catch (error) {
-      return res
-      .status(401)
-      .json(
-        {
-          success:false,
-          message:"Only admin can access.",
-          timestamp:new Date().toISOString(),
-        }
-        )
+      decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    } catch (err) {
+      throw new ApiError(401, "Invalid access token");
     }
-    
-})
+    const user = await User.findById(decoded._id).select(
+      "-password -refreshToken"
+    );
+
+    if (!user) {
+      throw new ApiError(401, "Invalid user");
+    }
+
+    req.user = user;
+    // attachUser(req,res,next);
+
+
+    next();
+  } catch (error) {
+    return res.status(401).json({
+      success: false,
+      message: "Invalid access token",
+      timestamp: new Date().toISOString(),
+    });
+  }
+});
+
+
+export const attachUser = async (req, res, next) => {
+  const { _id, role } = req.user;
+
+  let user;
+
+  if (role === "student") user = await Student.findOne({ userId: _id });
+  if (role === "warden") user = await Warden.findOne({ userId: _id });
+  if (role === "worker") user = await Worker.findOne({ userId: _id });
+  if (role === "superadmin") user = await SuperAdmin.findOne({ userId: _id });
+
+  req.fullUser = user;
+
+  next();
+};

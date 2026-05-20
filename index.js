@@ -5,6 +5,13 @@ dotenv.config({
     path: './.env'
 })
 
+app.get("/", (_req, res) => {
+  res.json({ data: "Hello world" });
+});
+
+app.get("/health", (_req, res) => {
+  res.status(200).json({ ok: true });
+});
 
 
 const MONGO_URI=process.env.MONGO_URI
@@ -15,7 +22,7 @@ mongoose.connect(MONGO_URI, {
     // useUnifiedTopology: true,
   })
   .then(() => {
-    app.listen(port, () => {
+    app.listen(port,"0.0.0.0", () => {
         console.log(`Hostel Saathi listening on port ${port}`)
       })
     console.log('MongoDB connected')

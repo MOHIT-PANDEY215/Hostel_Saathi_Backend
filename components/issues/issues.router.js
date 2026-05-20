@@ -1,7 +1,9 @@
 import { Router } from "express";
 import issueController from "./issues.controller.js";
 import { upload } from "../../middleware/multer.middleware.js";
-import { verifyAdmin, verifyJWT } from "../../middleware/auth.middleware.js";
+import { verifyJWT } from "../../middleware/auth.middleware.js";
+import { authorize } from "../../middleware/rbac.middleware.js";
+import { PERMISSIONS } from "../../config/roles.config.js";
 
 const issueRouter = Router();
 
@@ -125,7 +127,7 @@ issueRouter.get("/", issueController.getIssueById);
  *       201:
  *         description: Issue created or updated successfully.
  */
-issueRouter.post("/", upload.any(), verifyJWT, issueController.postIssue);
+issueRouter.post("/", upload.any(), verifyJWT,authorize(PERMISSIONS.CREATE_ISSUE), issueController.postIssue);
 
 /**
  * @swagger
@@ -160,7 +162,7 @@ issueRouter.post("/", upload.any(), verifyJWT, issueController.postIssue);
  *       200:
  *         description: Worker assigned successfully.
  */
-issueRouter.post("/assign-worker", verifyJWT, verifyAdmin, issueController.assignIssue);
+issueRouter.post("/assign-worker", verifyJWT, issueController.assignIssue);
 
 /**
  * @swagger
@@ -190,7 +192,7 @@ issueRouter.post("/assign-worker", verifyJWT, verifyAdmin, issueController.assig
  *       200:
  *         description: Priority updated successfully.
  */
-issueRouter.post("/set-priority", verifyJWT, verifyAdmin, issueController.setPriority);
+issueRouter.post("/set-priority", verifyJWT, issueController.setPriority);
 
 /**
  * @swagger
@@ -216,6 +218,6 @@ issueRouter.post("/set-priority", verifyJWT, verifyAdmin, issueController.setPri
  *       200:
  *         description: Issue deleted successfully.
  */
-issueRouter.post("/delete", verifyJWT, verifyAdmin, issueController.deleteIssue);
+issueRouter.post("/delete", verifyJWT, issueController.deleteIssue);
 
 export default issueRouter;

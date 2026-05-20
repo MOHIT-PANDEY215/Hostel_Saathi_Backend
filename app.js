@@ -2,6 +2,7 @@ import express from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
+import { errorHandler } from './middleware/error.middleware.js'
 
 dotenv.config()
 
@@ -17,22 +18,25 @@ app.use(express.json({limit: "16kb"}))
 app.use(express.urlencoded({extended: true, limit: "16kb"}))
 app.use(express.static("public"))
 app.use(cookieParser())
+app.use(errorHandler);
 
+// The below handlers are for uncaught exceptions and unhandled promise rejections. They log the error and exit the process to prevent the server from running in an unstable state.
 
-import studentRouter from './components/student/student.router.js'
-import issueRouter from './components/issues/issues.router.js'
-import adminRouter from './components/admin/admin.router.js'
-import workerRouter from './components/worker/worker.router.js'
+process.on("uncaughtException", (err) => {
+  console.error("Uncaught Exception:", err.message);
+  process.exit(1);
+});
+
+process.on("unhandledRejection", (err) => {
+  console.error("Unhandled Promise Rejection:", err.message);
+  process.exit(1);
+});
+
 
 import setupSwagger from './swagger.js'
-
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+import routesInit from './routes.js'
 setupSwagger(app);
-app.use('/api/v1/student',studentRouter);
-app.use('/api/v1/issue',issueRouter);
-app.use('/api/v1/admin',adminRouter);
-app.use('/api/v1/worker',workerRouter);
+
+routesInit(app);
 
 export {app}

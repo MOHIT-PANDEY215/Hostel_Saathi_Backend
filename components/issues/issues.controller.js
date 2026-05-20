@@ -1,16 +1,31 @@
 import { BSON } from "bson";
 import dotenv from "dotenv";
 import Issue from "./issues.model.js";
-import Worker from "../worker/worker.model.js";
+// import Worker from "../worker/worker.model.js";
 import { uploadOnCloudinary } from "../../utils/cloudinary.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
 import { getSortBy } from "../../utils/helper.js";
+import Worker from "../roles/worker/worker.model.js";
 
 dotenv.config();
 
 const timestamp = new Date().toISOString();
+
+// const validateTags = async (tagIds, hostelNumber) => {
+//   const validTags = await Tag.find({
+//     _id: { $in: tagIds },
+//     hostelNumber,
+//     isActive: true,
+//   });
+
+//   if (validTags.length !== tagIds.length) {
+//     throw new ApiError(400, "Invalid tags provided");
+//   }
+
+//   return validTags;
+// };
 
 const issueController = {
   getAllIssue: asyncHandler(async (req, res) => {
